@@ -1,0 +1,24 @@
+html
+    head
+        title Users
+    body
+        h1 Users
+        table(style='width:100%', border='1')
+            tr
+                th User ID
+                th Username
+                th Name
+                th Email
+                th Age
+            each item in users
+                tr
+                    td= item.userId
+                    td= item.username
+                    td= item.name
+                    td= item.email
+                    td= item.age
+                    td
+                        a(href='/user/edit/:userId', name='edit') Edit
+                    td
+                         a(href='#', name='delete') Delete
+                

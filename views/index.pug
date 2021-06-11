@@ -1,0 +1,15 @@
+html
+    head
+        title User Manager
+    body
+        h1 Create New User
+        form(id="myForm", method="post", action="/users/create")
+            label(for="username") Username
+            input(type="text", id="username", name="username")
+            label(for="name") Name
+            input(type="text", id="name", name="name")
+            label(for="email") Email
+            input(type="email", id="email", name="email")
+            label(for="age") Age
+            input(type="number", id="age", name="age")
+            input(type="submit", value="Add User")
