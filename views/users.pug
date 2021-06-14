@@ -1,6 +1,6 @@
 html
     head
-        title Users
+        title User Manager
     body
         h1 Users
         table(style='width:100%', border='1')
@@ -18,7 +18,8 @@ html
                     td= item.email
                     td= item.age
                     td
-                        a(href='/user/edit/:userId', name='edit') Edit
+                        a(href=`/edit/${item.userId}`, name='edit') Edit
                     td
-                         a(href='#', name='delete') Delete
-                
+                        form(method="post", action="/table")
+                            input(type="hidden", id="userId", name="userId" value=`${item.userId}`)
+                            button(name='delete', id="delete") Delete
