@@ -1,6 +1,7 @@
-const { timeStamp } = require('console');
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
+const file = fs.createWriteStream('./users.json');
 const app = express();
 const { v4: uuidv4 } = require('uuid');
 
@@ -34,6 +35,12 @@ app.get('/', (req, res) => {
 app.post('/create', (req, res) => {
     const user = {userId: uuidv4(), username: req.body.username, name: req.body.name, email: req.body.email, age: req.body.age}
     users.push(user);
+    fs.writeFile('./users.json', JSON.stringify(users), function(err){
+        if(err)
+        {
+            res.redirect('/table');
+        }
+    });
     res.redirect('/table');
 });
 
