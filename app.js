@@ -8,15 +8,15 @@ const { v4: uuidv4 } = require('uuid');
 let users = [
     {
         userId: uuidv4(),
-        username: 'dginos',
-        name: 'Dustin',
+        firstName: 'Dustin',
+        lastName: 'Ginos',
         email: 'dustin@email.com',
         age: '29'
     },
     {
         userId: uuidv4(),
-        username: 'diego3',
-        name: 'Diego',
+        firstName: 'Diego',
+        lastName: 'Ginos',
         email: 'diego@email.com',
         age: '7'
     }
@@ -33,7 +33,7 @@ app.get('/', (req, res) => {
 });
 
 app.post('/create', (req, res) => {
-    const user = {userId: uuidv4(), username: req.body.username, name: req.body.name, email: req.body.email, age: req.body.age}
+    const user = {userId: uuidv4(), firstName: req.body.firstName, lastName: req.body.lastName, email: req.body.email, age: req.body.age}
     users.push(user);
     fs.writeFile('./users.json', JSON.stringify(users), function(err){
         if(err)
@@ -54,8 +54,8 @@ app.get('/edit/:userId', (req, res) => {
     let userId = req.params.userId;
     let userInfo = getUsers(userId);
     res.render('editIndex', {
-        usernameField: userInfo[0],
-        nameField: userInfo[1],
+        firstNameField: userInfo[0],
+        lastNameField: userInfo[1],
         emailField: userInfo[2],
         ageField: userInfo[3],
         userId: userId
@@ -66,8 +66,8 @@ app.post('/edit/:userId', (req, res) => {
     let userId = req.params.userId;
     for (let i = 0; i < users.length; i++) {
         if (users[i].userId === userId) {
-            users[i].username = req.body.username;
-            users[i].name = req.body.name;
+            users[i].firstName = req.body.firstName;
+            users[i].lastName = req.body.lastName;
             users[i].email = req.body.email;
             users[i].age = req.body.age;
         }
@@ -93,12 +93,12 @@ function test()
 function getUsers(id) {
     for (let i = 0; i < users.length; i++) {
         if (users[i].userId === id) {
-            let currentUser = [users[i].username, users[i].name, users[i].email, users[i].age]
+            let currentUser = [users[i].firstName, users[i].lastName, users[i].email, users[i].age]
             return currentUser;
         }
     }
 }
 
-app.listen(3000, () => {
-    console.log('listening on port 3000');
+app.listen(4000, () => {
+    console.log('listening on port 4000');
 });

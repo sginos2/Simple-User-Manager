@@ -6,15 +6,15 @@ html
         table(style='width:100%', border='1')
             tr
                 th User ID
-                th Username
-                th Name
+                th First Name
+                th Last Name
                 th Email
                 th Age
             each item in users
                 tr
                     td= item.userId
-                    td= item.username
-                    td= item.name
+                    td= item.firstName
+                    td= item.lastName
                     td= item.email
                     td= item.age
                     td
