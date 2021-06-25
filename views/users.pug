@@ -3,6 +3,13 @@ html
         title User Manager
     body
         h1 Users
+        form(action="/table", method="GET", id="search")
+            input(type='text', placeholder='Search by Name')
+            button(type='submit') Submit
+        label(for='sort') Sort Alphebetically:
+        select(name="sort" id="sort")
+            option(value='A-Z') A-Z
+            option(value='Z-A') Z-A
         table(style='width:100%', border='1')
             tr
                 th User ID

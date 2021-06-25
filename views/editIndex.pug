@@ -4,9 +4,9 @@ html
     body
         h1 Edit User
         form(id="myForm", method="post", action=`/edit/${userId}`)
-            input(type="text", id="firstName", name="firstName", placeholder=`${firstNameField}`, required)
+            input(type="text", id="firstName", name="firstName", value=`${firstNameField}`, required)
             br
-            input(type="text", id="lastName", name="lastName", placeholder=`${lastNameField}`, required)
+            input(type="text", id="lastName", name="lastName", value=`${lastNameField}`, required)
             br
             input(type="email", id="email", name="email", value=`${emailField}`, required)
             br

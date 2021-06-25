@@ -1,24 +1,89 @@
 const express = require('express');
 const path = require('path');
-const fs = require('fs');
-const file = fs.createWriteStream('./users.json');
 const app = express();
-const { v4: uuidv4 } = require('uuid');
+const mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost:27017/testUser', {useNewUrlParser: true, useUnifiedTopology: true});
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+  console.log('we connected to mongo!');
+});
+
+const userSchema = new mongoose.Schema({
+    firstName: String,
+    lastName: String,
+    email: String,
+    age: String
+});
+
+const courseSchema = new mongoose.Schema({
+    Course: String,
+    Title: String,
+    Credits: Number
+})
+
+const userData = mongoose.model('User', userSchema);
 
 let users = [
     {
-        userId: uuidv4(),
-        firstName: 'Dustin',
-        lastName: 'Ginos',
-        email: 'dustin@email.com',
-        age: '29'
+        firstName: 'Daenerys',
+        lastName: 'Targaryen',
+        email: 'dragonmom@email.com',
+        age: '24'
     },
     {
-        userId: uuidv4(),
-        firstName: 'Diego',
-        lastName: 'Ginos',
-        email: 'diego@email.com',
-        age: '7'
+        firstName: 'Tom',
+        lastName: 'Riddle',
+        email: 'slytherinrules@email.com',
+        age: '71'
+    },
+    {
+        firstName: 'Frodo',
+        lastName: 'Baggins',
+        email: 'mrunderhill@email.com',
+        age: '51'
+    },
+    {
+        firstName: 'Loki',
+        lastName: 'Laufeyson',
+        email: 'gloriouspurpose@email.com',
+        age: '1054'
+    },
+    {
+        firstName: 'Obi-Wan',
+        lastName: 'Kenobi',
+        email: 'hellothere@email.com',
+        age: '47'
+    },
+    {
+        firstName: 'Johanna',
+        lastName: 'Mason',
+        email: 'treessuck@email.com',
+        age: '24'
+    },
+    {
+        firstName: 'Fitzwilliam',
+        lastName: 'Darcy',
+        email: 'mostardently@email.com',
+        age: '28'
+    },
+    {
+        firstName: 'Jack',
+        lastName: 'Sparrow',
+        email: 'hidetherum@email.com',
+        age: '28'
+    },
+    {
+        firstName: 'Jean-Luc',
+        lastName: 'Picard',
+        email: 'starfleetflautist@email.com',
+        age: '32'
+    },
+    {
+        firstName: 'Ben',
+        lastName: 'Wyatt',
+        email: 'lowcalcalzonezone@email.com',
+        age: '43'
     }
 ];
 
@@ -33,18 +98,25 @@ app.get('/', (req, res) => {
 });
 
 app.post('/create', (req, res) => {
-    const user = {userId: uuidv4(), firstName: req.body.firstName, lastName: req.body.lastName, email: req.body.email, age: req.body.age}
-    users.push(user);
-    fs.writeFile('./users.json', JSON.stringify(users), function(err){
-        if(err)
-        {
-            res.redirect('/table');
-        }
+    // const user = {firstName: req.body.firstName, lastName: req.body.lastName, email: req.body.email, age: req.body.age}
+    
+
+    db.userData.insertOne({
+        "firstName": req.body.firstName, 
+        "lastName": req.body.lastName, 
+        "email": req.body.email, 
+        "age": req.body.age
     });
     res.redirect('/table');
 });
 
 app.get('/table', (req, res) => {
+    userData.find({}, (err, data)=> {
+        if (err) return console.log(`Oops! ${err}`);
+        let result = JSON.stringify(data);
+        console.log(`data = ${result}`);
+    });
+
     res.render('users', {
         users: users
     });
