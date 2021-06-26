@@ -29,13 +29,15 @@ app.get('/', (req, res) => {
 });
 
 app.post('/create', (req, res) => {
-    userData.insertOne({
+    userData.create({
         "firstName": `${req.body.firstName}`, 
         "lastName": `${req.body.lastName}`, 
         "email": `${req.body.email}`, 
         "age": `${req.body.age}`
+    }, (err, data) => {
+        if (err) return console.log(`Oops! ${err}`);
+        res.redirect('/table');
     });
-    res.redirect('/table');
 });
 
 app.get('/table', (req, res) => {
@@ -47,107 +49,70 @@ app.get('/table', (req, res) => {
     });
 });
 
-app.get('/edit/:_id', (req, res) => {
-    let userId = req.params._id;
-    let userInfo = getUsers(userId);
-    console.log(userInfo);
-    res.send(userInfo);
+app.get('/sortOY', (req, res) => {
+    userData.find({}).sort({age: -1}).exec((err, data) => { 
+        if (err) return console.log(`Oops! ${err}`);
+        res.render('users', {
+            users: data
+        });
+    });
 });
 
-app.post('/edit/:userId', (req, res) => {
-    let userId = req.params._id;
-    for (let i = 0; i < users.length; i++) {
-        if (users[i].userId === userId) {
-            users[i].firstName = req.body.firstName;
-            users[i].lastName = req.body.lastName;
-            users[i].email = req.body.email;
-            users[i].age = req.body.age;
-        }
-    }
-    res.redirect('/table');
+app.get('/sortYO', (req, res) => {
+    userData.find({}).sort({age: 1}).exec((err, data) => { 
+        if (err) return console.log(`Oops! ${err}`);
+        res.render('users', {
+            users: data
+        });
+    });
+});
+
+app.post('/search', (req, res) => {
+    let searchStr = req.body.search.trim();
+    userData.find({"firstName": { $regex: searchStr, $options: 'i' }}, (err, data)=> {
+        if (err) return console.log(`Oops! ${err}`);
+        res.render('users', {
+            users: data
+        });
+    });
 });
 
 app.post('/table', (req, res) => {
-    let userId = req.body._id;
-    for (let i = 0; i < users.length; i++) {
-        if (users[i].userId === userId) {
-            users.splice(i, 1);
-        }
-    }
-    res.redirect('/table');
+    let userId = req.body.userId;
+    userData.findByIdAndDelete({_id: userId}, function(err, result){
+        if (err) return console.log(`${err}`);
+        res.redirect('/table');
+    });
 });
 
-function getUsers(id) {
+app.get('/edit/:userId', (req, res) => {
+    let id = req.params.userId;
     userData.find({_id: `${id}`}, (err, data) => {
         if (err) return console.log(`Oops! ${err}`);
-        console.log(data);
-        return(data);
+        res.render('editIndex', {
+            firstNameField: data[0].firstName,
+            lastNameField: data[0].lastName,
+            emailField: data[0].email,
+            ageField: data[0].age,
+            userId: id
+        });
     });
-}
+});
+
+app.post('/edit/:userId', (req, res) => {
+    let id = req.params.userId;
+    userData.findByIdAndUpdate({_id: id}, {
+        "firstName": `${req.body.firstName}`,
+        "lastName": `${req.body.lastName}`,
+        "email": `${req.body.email}`,
+        "age": `${req.body.age}`
+    }, function(err, result){
+        if (err) return console.log(`${err}`);
+        console.log(result)
+        res.redirect('/table');
+    });
+});
 
 app.listen(4000, () => {
     console.log('listening on port 4000');
 });
-
-// let users = [
-//     {
-//         firstName: 'Daenerys',
-//         lastName: 'Targaryen',
-//         email: 'dragonmom@email.com',
-//         age: '24'
-//     },
-//     {
-//         firstName: 'Tom',
-//         lastName: 'Riddle',
-//         email: 'slytherinrules@email.com',
-//         age: '71'
-//     },
-//     {
-//         firstName: 'Frodo',
-//         lastName: 'Baggins',
-//         email: 'mrunderhill@email.com',
-//         age: '51'
-//     },
-//     {
-//         firstName: 'Loki',
-//         lastName: 'Laufeyson',
-//         email: 'gloriouspurpose@email.com',
-//         age: '1054'
-//     },
-//     {
-//         firstName: 'Obi-Wan',
-//         lastName: 'Kenobi',
-//         email: 'hellothere@email.com',
-//         age: '47'
-//     },
-//     {
-//         firstName: 'Johanna',
-//         lastName: 'Mason',
-//         email: 'treessuck@email.com',
-//         age: '24'
-//     },
-//     {
-//         firstName: 'Fitzwilliam',
-//         lastName: 'Darcy',
-//         email: 'mostardently@email.com',
-//         age: '28'
-//     },
-//     {
-//         firstName: 'Jack',
-//         lastName: 'Sparrow',
-//         email: 'hidetherum@email.com',
-//         age: '28'
-//     },
-//     {
-//         firstName: 'Jean-Luc',
-//         lastName: 'Picard',
-//         email: 'starfleetflautist@email.com',
-//         age: '32'
-//     },
-//     {
-//         firstName: 'Ben',
-//         lastName: 'Wyatt',
-//         email: 'lowcalcalzonezone@email.com',
-//         age: '43'
-//     }
-// ];

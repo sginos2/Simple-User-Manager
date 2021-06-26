@@ -3,13 +3,14 @@ html
         title User Manager
     body
         h1 Users
-        form(action="/table", method="GET", id="search")
-            input(type='text', placeholder='Search by Name')
+        form(action="/search", method="post")
+            input(type='text', name="search", id="search" placeholder='Search by First Name')
             button(type='submit') Submit
-        label(for='sort') Sort Alphebetically:
-        select(name="sort" id="sort")
-            option(value='A-Z') A-Z
-            option(value='Z-A') Z-A
+        form(action="/sortOY", method="get")
+            button(type='submit', id="old-young") Sort Oldest-Youngest
+        form(action="/sortYO", method="get")
+            button(type='submit', id="young-old") Sort Youngest-Oldest
+        
         table(style='width:100%', border='1')
             tr
                 th User ID

@@ -3,7 +3,7 @@ html
         title User Manager
     body
         h1 Edit User
-        form(id="myForm", method="post", action=`/edit/${_id}`)
+        form(id="myForm", method="post", action=`/edit/${userId}`)
             input(type="text", id="firstName", name="firstName", value=`${firstNameField}`, required)
             br
             input(type="text", id="lastName", name="lastName", value=`${lastNameField}`, required)
