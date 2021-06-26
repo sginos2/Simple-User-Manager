@@ -16,76 +16,7 @@ const userSchema = new mongoose.Schema({
     age: String
 });
 
-const courseSchema = new mongoose.Schema({
-    Course: String,
-    Title: String,
-    Credits: Number
-})
-
 const userData = mongoose.model('User', userSchema);
-
-let users = [
-    {
-        firstName: 'Daenerys',
-        lastName: 'Targaryen',
-        email: 'dragonmom@email.com',
-        age: '24'
-    },
-    {
-        firstName: 'Tom',
-        lastName: 'Riddle',
-        email: 'slytherinrules@email.com',
-        age: '71'
-    },
-    {
-        firstName: 'Frodo',
-        lastName: 'Baggins',
-        email: 'mrunderhill@email.com',
-        age: '51'
-    },
-    {
-        firstName: 'Loki',
-        lastName: 'Laufeyson',
-        email: 'gloriouspurpose@email.com',
-        age: '1054'
-    },
-    {
-        firstName: 'Obi-Wan',
-        lastName: 'Kenobi',
-        email: 'hellothere@email.com',
-        age: '47'
-    },
-    {
-        firstName: 'Johanna',
-        lastName: 'Mason',
-        email: 'treessuck@email.com',
-        age: '24'
-    },
-    {
-        firstName: 'Fitzwilliam',
-        lastName: 'Darcy',
-        email: 'mostardently@email.com',
-        age: '28'
-    },
-    {
-        firstName: 'Jack',
-        lastName: 'Sparrow',
-        email: 'hidetherum@email.com',
-        age: '28'
-    },
-    {
-        firstName: 'Jean-Luc',
-        lastName: 'Picard',
-        email: 'starfleetflautist@email.com',
-        age: '32'
-    },
-    {
-        firstName: 'Ben',
-        lastName: 'Wyatt',
-        email: 'lowcalcalzonezone@email.com',
-        age: '43'
-    }
-];
 
 app.set('views', path.join(__dirname, 'views'));
 app.use(express.static('views'));
@@ -98,14 +29,11 @@ app.get('/', (req, res) => {
 });
 
 app.post('/create', (req, res) => {
-    // const user = {firstName: req.body.firstName, lastName: req.body.lastName, email: req.body.email, age: req.body.age}
-    
-
-    db.userData.insertOne({
-        "firstName": req.body.firstName, 
-        "lastName": req.body.lastName, 
-        "email": req.body.email, 
-        "age": req.body.age
+    userData.insertOne({
+        "firstName": `${req.body.firstName}`, 
+        "lastName": `${req.body.lastName}`, 
+        "email": `${req.body.email}`, 
+        "age": `${req.body.age}`
     });
     res.redirect('/table');
 });
@@ -113,29 +41,21 @@ app.post('/create', (req, res) => {
 app.get('/table', (req, res) => {
     userData.find({}, (err, data)=> {
         if (err) return console.log(`Oops! ${err}`);
-        let result = JSON.stringify(data);
-        console.log(`data = ${result}`);
-    });
-
-    res.render('users', {
-        users: users
+        res.render('users', {
+            users: data
+        });
     });
 });
 
-app.get('/edit/:userId', (req, res) => {
-    let userId = req.params.userId;
+app.get('/edit/:_id', (req, res) => {
+    let userId = req.params._id;
     let userInfo = getUsers(userId);
-    res.render('editIndex', {
-        firstNameField: userInfo[0],
-        lastNameField: userInfo[1],
-        emailField: userInfo[2],
-        ageField: userInfo[3],
-        userId: userId
-    });
+    console.log(userInfo);
+    res.send(userInfo);
 });
 
 app.post('/edit/:userId', (req, res) => {
-    let userId = req.params.userId;
+    let userId = req.params._id;
     for (let i = 0; i < users.length; i++) {
         if (users[i].userId === userId) {
             users[i].firstName = req.body.firstName;
@@ -148,7 +68,7 @@ app.post('/edit/:userId', (req, res) => {
 });
 
 app.post('/table', (req, res) => {
-    let userId = req.body.userId;
+    let userId = req.body._id;
     for (let i = 0; i < users.length; i++) {
         if (users[i].userId === userId) {
             users.splice(i, 1);
@@ -157,20 +77,77 @@ app.post('/table', (req, res) => {
     res.redirect('/table');
 });
 
-function test()
-{
-    console.log("In test")
-}
-
 function getUsers(id) {
-    for (let i = 0; i < users.length; i++) {
-        if (users[i].userId === id) {
-            let currentUser = [users[i].firstName, users[i].lastName, users[i].email, users[i].age]
-            return currentUser;
-        }
-    }
+    userData.find({_id: `${id}`}, (err, data) => {
+        if (err) return console.log(`Oops! ${err}`);
+        console.log(data);
+        return(data);
+    });
 }
 
 app.listen(4000, () => {
     console.log('listening on port 4000');
 });
+
+// let users = [
+//     {
+//         firstName: 'Daenerys',
+//         lastName: 'Targaryen',
+//         email: 'dragonmom@email.com',
+//         age: '24'
+//     },
+//     {
+//         firstName: 'Tom',
+//         lastName: 'Riddle',
+//         email: 'slytherinrules@email.com',
+//         age: '71'
+//     },
+//     {
+//         firstName: 'Frodo',
+//         lastName: 'Baggins',
+//         email: 'mrunderhill@email.com',
+//         age: '51'
+//     },
+//     {
+//         firstName: 'Loki',
+//         lastName: 'Laufeyson',
+//         email: 'gloriouspurpose@email.com',
+//         age: '1054'
+//     },
+//     {
+//         firstName: 'Obi-Wan',
+//         lastName: 'Kenobi',
+//         email: 'hellothere@email.com',
+//         age: '47'
+//     },
+//     {
+//         firstName: 'Johanna',
+//         lastName: 'Mason',
+//         email: 'treessuck@email.com',
+//         age: '24'
+//     },
+//     {
+//         firstName: 'Fitzwilliam',
+//         lastName: 'Darcy',
+//         email: 'mostardently@email.com',
+//         age: '28'
+//     },
+//     {
+//         firstName: 'Jack',
+//         lastName: 'Sparrow',
+//         email: 'hidetherum@email.com',
+//         age: '28'
+//     },
+//     {
+//         firstName: 'Jean-Luc',
+//         lastName: 'Picard',
+//         email: 'starfleetflautist@email.com',
+//         age: '32'
+//     },
+//     {
+//         firstName: 'Ben',
+//         lastName: 'Wyatt',
+//         email: 'lowcalcalzonezone@email.com',
+//         age: '43'
+//     }
+// ];
